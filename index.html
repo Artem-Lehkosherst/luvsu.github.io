@@ -20,6 +20,36 @@
       position: relative;
     }
 
+    /* Блок "Живая надпись" – расположен ниже секции HERO, без рамки */
+    .live-text {
+      position: absolute;
+      top: 80px; /* Располагаем ниже */
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2em;
+      font-weight: bold;
+      color: red;
+      display: flex;
+      gap: 10px;
+      padding: 10px 20px;
+      /* Убраны свойства рамки и скругления: */
+      /* border: 2px solid red; */
+      /* border-radius: 20px; */
+      background: rgba(255, 255, 255, 0.8);
+      z-index: 200;
+    }
+    .live-text span {
+      opacity: 0;
+    }
+    /* Анимация плавного появления и исчезновения */
+    @keyframes fadeInOut {
+      0%   { opacity: 0; }
+      20%  { opacity: 1; }
+      80%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* Секция HERO */
     #hero {
       overflow: hidden;
       background: #ffe6e6 url("background/1.jpg") no-repeat center center;
@@ -50,7 +80,7 @@
     #hero-scroll:hover {
       background: rgba(0, 0, 0, 0.05);
     }
-
+    /* Анимация сердечек */
     .heart {
       --heart-size: 20px;
       position: absolute;
@@ -96,9 +126,9 @@
         opacity: 0;
       }
     }
-
+    /* Секция SLIDER */
     #slider {
-      background: #ffe6e6 url("background/1.jpg") no-repeat center center;
+      background: #ffe6e6 url("background/2.jpg") no-repeat center center;
       background-size: cover;
       background-attachment: scroll;
       overflow: hidden;
@@ -146,6 +176,19 @@
   </style>
 </head>
 <body>
+  <!-- Блок "Живая надпись" (расположен чуть выше секции HERO) -->
+  <div class="live-text">
+    <span class="lttr--I">I</span>
+    <span class="lttr--L">L</span>
+    <span class="lttr--O">O</span>
+    <span class="lttr--V">V</span>
+    <span class="lttr--E">E</span>
+    <span class="lttr--Y">Y</span>
+    <span class="lttr--O2">O</span>
+    <span class="lttr--U">U</span>
+  </div>
+
+  <!-- Секция HERO -->
   <section id="hero">
     <div class="card">
       <h1>Мышка моя</h1>
@@ -155,12 +198,11 @@
       <p>за умение понять, простить, поддержать и выслушать в трудную минуту.</p>
       <p>Спасибо, что ты есть! ❤️</p>
       <p style="text-align: right;">На веки твой, Тёма</p>
-
-
     </div>
     <div id="hero-scroll"></div>
   </section>
 
+  <!-- Секция SLIDER -->
   <section id="slider">
     <div class="slider-container">
       <img src="luv/1.jpg" alt="Фото 1" class="slider-image active">
@@ -173,14 +215,19 @@
       <img src="luv/8.jpg" alt="Фото 8" class="slider-image">
       <img src="luv/9.jpg" alt="Фото 9" class="slider-image">
       <img src="luv/10.jpg" alt="Фото 10" class="slider-image">
-      <img src="luv/11.jpg" alt="Фото 10" class="slider-image">
-      <img src="luv/12.jpg" alt="Фото 10" class="slider-image">
-      <img src="luv/13.jpg" alt="Фото 10" class="slider-image">
-      <img src="luv/14.jpg" alt="Фото 10" class="slider-image">
+      <img src="luv/11.jpg" alt="Фото 11" class="slider-image">
+      <img src="luv/12.jpg" alt="Фото 12" class="slider-image">
+      <img src="luv/13.jpg" alt="Фото 13" class="slider-image">
+      <img src="luv/14.jpg" alt="Фото 14" class="slider-image">
       <div class="slider-nav slider-nav-left"></div>
       <div class="slider-nav slider-nav-right"></div>
     </div>
   </section>
+
+  <script>
+    // Инициализация Telegram Web App
+    window.Telegram.WebApp.ready();
+  </script>
 
   <script>
     function createHeart(container) {
@@ -211,7 +258,6 @@
     for (let i = 0; i < heartsCount; i++) {
       createHeart(heroSection);
     }
-
     for (let i = 0; i < heartsCount; i++) {
       createHeart(sliderSection);
     }
@@ -226,12 +272,10 @@
       const startY = window.scrollY;
       const diff = targetY - startY;
       let startTime = null;
-
       function step(timestamp) {
         if (!startTime) startTime = timestamp;
         const time = timestamp - startTime;
         let percent = Math.min(time / duration, 1);
-        // Функция сглаживания easeInOutQuad
         let eased = percent < 0.5
           ? 2 * percent * percent
           : -1 + (4 - 2 * percent) * percent;
@@ -292,15 +336,12 @@
     function goToNextSlide() {
       if (sliderAnimating) return;
       sliderAnimating = true;
-
       let current = sliderImages[currentSlide];
       let nextSlide = (currentSlide + 1) % sliderImages.length;
       let next = sliderImages[nextSlide];
-
       current.classList.remove('active');
       next.classList.remove('next');
       next.classList.add('active');
-
       setTimeout(() => {
         currentSlide = nextSlide;
         updateNextSlide();
@@ -311,14 +352,11 @@
     function goToPrevSlide() {
       if (sliderAnimating) return;
       sliderAnimating = true;
-
       let current = sliderImages[currentSlide];
       let prevSlide = (currentSlide - 1 + sliderImages.length) % sliderImages.length;
       let prev = sliderImages[prevSlide];
-
       current.classList.remove('active');
       prev.classList.add('active');
-
       currentSlide = prevSlide;
       updateNextSlide();
       setTimeout(() => {
@@ -333,6 +371,32 @@
     document.querySelector('.slider-nav-right').addEventListener('click', function(e) {
       e.preventDefault();
       goToNextSlide();
+    });
+  </script>
+
+  <!-- Скрипт для анимации "живой надписи" с повтором -->
+  <script>
+    function qs(selector) {
+      return document.querySelector(selector);
+    }
+    const liveText = {
+      i: qs(".lttr--I"),
+      l: qs(".lttr--L"),
+      o: qs(".lttr--O"),
+      v: qs(".lttr--V"),
+      e: qs(".lttr--E"),
+      y: qs(".lttr--Y"),
+      o2: qs(".lttr--O2"),
+      u: qs(".lttr--U")
+    };
+
+    // Задаем повторяющуюся анимацию для каждой буквы
+    Object.keys(liveText).forEach((key, index) => {
+      const letter = liveText[key];
+      if (letter) {
+        letter.style.animation = "fadeInOut 4s infinite ease-in-out";
+        letter.style.animationDelay = (index * 0.3) + "s";
+      }
     });
   </script>
 </body>
